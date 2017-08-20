@@ -7,7 +7,30 @@ $message = "";
 $error = "";
 $errorMessage = "";
 
-if (!empty($_POST) && $_SERVER['QUERY_STRING'] == "") {
+if ($_SERVER['QUERY_STRING'] == "logout") {
+    if ($curUser) {
+        $curUser->rememberToken(true);
+        $curUser = false;
+    }
+    if (isset($_COOKIE["token"]) && !empty($_COOKIE["token"])) {
+        setcookie("token", "", time() - 1); //cookie expired
+    }
+    if (isset($_SESSION["curUser"]) && !empty($_SESSION["curUser"])) {
+        unset($_SESSION["curUser"]);
+        session_destroy();
+    }
+    require_once 'Views/loginForm.php';
+}
+elseif ($curUser) {
+    redirectToHome();
+}
+elseif ($_SERVER['QUERY_STRING'] == "login") {
+    require_once 'Views/loginForm.php';
+}
+elseif ($_SERVER['QUERY_STRING'] == "register") {
+    require_once 'Views/registerForm.php';
+}
+elseif (!empty($_POST) && $_SERVER['QUERY_STRING'] == "") {
     $userObj = null;
 
     if ($_POST["action"] == "Log In") {
@@ -16,7 +39,13 @@ if (!empty($_POST) && $_SERVER['QUERY_STRING'] == "") {
             
             if ($userObj) {
                 if ($userObj->verifyPassword($_POST["pass"])) {
-                    saveSession($userObj);
+                    $token = $userObj->rememberToken();
+                    $_SESSION["curUser"] = $userObj;
+
+                    if ($_POST["remember"] && $token) {
+                        setcookie("token", $token, time() + 86400); //86400 1 day
+                    }
+                    redirectToHome();
                 }
                 else {
                     $error = "pass";
@@ -57,20 +86,6 @@ if (!empty($_POST) && $_SERVER['QUERY_STRING'] == "") {
         require_once 'Views/registerForm.php';
     }    
 }
-elseif ($_SERVER['QUERY_STRING'] == "login") {
-    require_once 'Views/loginForm.php';
-}
-elseif ($_SERVER['QUERY_STRING'] == "register") {
-    require_once 'Views/registerForm.php';
-}
-
-function saveSession($userObj)
-{
-    $token = $userObj->rememberToken();
-    if ($token) {
-        redirectToHome();
-    }
-    else {
-        $message = "Something went wrong. Plz try again";
-    }
+else {
+    redirectToHome();
 }

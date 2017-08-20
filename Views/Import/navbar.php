@@ -36,22 +36,34 @@
             </ul>
             
             <ul class="nav navbar-nav navbar-right">
-                <li
-                    <?php
-                        if($activeBar=="Login")
-                            echo "class='active'";
-                    ?>
-                >
-                    <a href="UserController.php?login">Login</a>
-                </li>
-                <li
-                    <?php
-                        if($activeBar=="Register")
-                            echo "class='active'";
-                    ?>
-                >
-                    <a href="UserController.php?register">Register</a>
-                </li>
+                <?php if ($curUser) : ?>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                            <?php echo $curUser->name; ?>
+                            <span class="caret"></span>
+                        </a>
+
+                        <ul class="dropdown-menu" role="menu">
+                            <li>
+                                <a href="index.php">
+                                    Home
+                                </a>
+                            </li>
+                            <li>
+                                <a href="UserController.php?logout">
+                                    Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                <?php else : ?>
+                    <li <?php if($activeBar=="Login") echo "class='active'"; ?> >
+                        <a href="UserController.php?login">Login</a>
+                    </li>
+                    <li <?php if($activeBar=="Register") echo "class='active'"; ?> >
+                        <a href="UserController.php?register">Register</a>
+                    </li>
+                <?php endif ?>
             </ul>
         </div>
     </div>

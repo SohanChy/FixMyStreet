@@ -41,8 +41,15 @@
         </div>
         
         <div class="form-group">
-            <div class="col-sm-4"></div>
-            <div class="col-sm-4">
+            <div class="col-sm-4 col-sm-offset-4">
+                <div class="checkbox">
+                    <label><input type="checkbox" name="remember">Remember Me</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-4 col-sm-offset-4">
                 <input type="submit" class="btn btn-primary" value="Log In" name="action">
                 <input type="reset" class="btn btn-danger">
             </div>

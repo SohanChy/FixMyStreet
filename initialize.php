@@ -4,6 +4,7 @@ require_once "Models/Connection.php";
 require_once "Models/Street.php";
 require_once "Models/Area.php";
 require_once "Models/User.php";
+require_once "Helpers/GetCurUser.php";
 $rootFolder =  basename(__DIR__) ;
 
 $areaPhp = "singleArea.php";
@@ -26,6 +27,12 @@ function check($id)
 function redirectToHome()
 {
     header('Location: index.php');
+    exit();
+}
+
+function redirectTo($path)
+{
+    header('Location: '.$path);
     exit();
 }
 

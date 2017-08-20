@@ -108,21 +108,6 @@ class User
         return false;
     }
 
-    public function checkToken($userToken)
-    {
-        $conn = new Connection();
-        $tn = self::$tableName;
-
-        $query = "SELECT token FROM {$tn} WHERE id={$this->id}";
-        $result = $conn->execute($query);
-
-        if ($result->num_rows == 1) {
-            $row = $result->fetch_assoc();
-            return $row['token'] == $userToken;
-        }
-        return false;
-    }
-
     public function delete()
     {
         $conn = new Connection();
