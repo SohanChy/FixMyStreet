@@ -1,7 +1,5 @@
 <?php
 
-//Model Class for Street
-
 class Street
 {
     public static $tableName = "streets";
@@ -25,110 +23,37 @@ class Street
     }
 
 
-    public static function getAll($limit = -1)
+    public static function getAll()
     {
         $conn = new Connection();
         $tn = Street::$tableName;
 
-        if ($limit == -1) {
-            $sql = "SELECT * FROM {$tn}";
-        } else {
-            $sql = "SELECT * FROM {$tn} LIMIT {$limit}";
-        }
-
-        $results = $conn->getConnection()->query($sql);
-        $allStreetArray = [];
-
-        if ($results->num_rows > 0) {
-            // output data of each row
-            while ($row = $results->fetch_assoc()) {
-                $streetObj = new Street(
-						$row['name'],
-						$row['imageJson'],
-						$row['details'],
-						$row['area_id'],
-						$row['user_id']
-                    );
-
-				$streetObj->setId($row['id']);
-                array_push($allStreetArray, $streetObj);
-            }
-            return $allStreetArray;
-        } else {
-            echo "0 or invalid number of results";
-            return $allStreetArray;
-        }
+        $query = "SELECT * FROM {$tn}";
+        $result = $conn->execute($query);
+        
+        return self::checkResult($result);
     }
 
-    public static function getAllByAreaId($areaId, $limit = -1)
+    public static function getAllByAreaId($areaId)
     {
         $conn = new Connection();
         $tn = Street::$tableName;
 
-        if ($limit == -1) {
-            $sql = "SELECT * FROM {$tn} where area_id={$areaId}";
-        } else {
-            $sql = "SELECT * FROM {$tn} where area_id={$areaId} LIMIT {$limit}";
-        }
+        $query = "SELECT * FROM {$tn} WHERE area_id={$areaId}";
+        $result = $conn->execute($query);
 
-        $results = $conn->getConnection()->query($sql);
-        $allStreetArray = [];
-
-        if ($results->num_rows > 0) {
-            // output data of each row
-            while ($row = $results->fetch_assoc()) {
-                $streetObj = new Street(
-                    $row['name'],
-                    $row['imageJson'],
-                    $row['details'],
-                    $row['area_id'],
-                    $row['user_id']
-                    );
-
-                $streetObj->setId($row['id']);
-                array_push($allStreetArray, $streetObj);
-            }
-            return $allStreetArray;
-        } else {
-            echo "0 or invalid number of results";
-            return $allStreetArray;
-        }
+        return self::checkResult($result);
     }
 
-    public static function searchByName($name, $limit = -1)
+    public static function searchByName($name)
     {
         $conn = new Connection();
         $tn = Street::$tableName;
 
-        if ($limit == -1) {
-            $sql = "SELECT * FROM {$tn} where name LIKE '%{$name}%'";
-        } else {
-            $sql = "SELECT * FROM {$tn} where name LIKE '%{$name}%' LIMIT {$limit}";
-        }
-
-        $results = $conn->getConnection()->query($sql);
-        $allStreetArray = [];
-
-        if ($results->num_rows > 0) {
-            // output data of each row
-            while ($row = $results->fetch_assoc()) {
-                $streetObj = new Street(
-                    $row['name'],
-                    $row['imageJson'],
-                    $row['details'],
-                    $row['area_id'],
-                    $row['user_id']
-                    );
-
-                $streetObj->setId($row['id']);
-                array_push($allStreetArray, $streetObj);
-            }
-
-            return $allStreetArray;
-        } else {
-            echo "0 or invalid number of results";
-            return $allStreetArray;
-        }
+        $query = "SELECT * FROM {$tn} WHERE name LIKE '%{$name}%'";
+        $result = $conn->execute($query);
+        
+        return self::checkResult($result);
     }
 
 
@@ -136,72 +61,86 @@ class Street
     {
         $conn = new Connection();
         $tn = Street::$tableName;
-        $sql = "SELECT * FROM {$tn} where id = {$id}";
-        $result = $conn->getConnection()->query($sql);
+        
+        $query = "SELECT * FROM {$tn} WHERE id={$id}";
+        $result = $conn->execute($query);
 
-        if ($result->num_rows == 1) {
-            $row = $result->fetch_assoc();
-            $foundObj = new Street($row['name'],
-                $row['imageJson'],
-                $row['details'],
-                $row['area_id'],
-                $row['user_id']
-                );
-
-            $foundObj->setId($row['id']);
-            return $foundObj;
-        } else {
-            echo "0 or invalid number of results";
-        }
+        return self::checkResult($result)[0]; // Assume that checkResult() will not return false
     }
 
     public function save()
     {
-        $C = new Connection();
-        $conn = $C->getConnection();
+        $conn = new Connection();
         $tn = Street::$tableName;
 
         if ($this->new == true) {
-            $sql = "INSERT into {$tn} (name, imageJson, details, area_id, user_id) 
-				values ('{$this->name}', '{$this->imageJson}', '{$this->details}', '{$this->area_id}', '{$this->user_id}')";
+            $query = "INSERT INTO {$tn} (name, imageJson, details, area_id, user_id) VALUES (
+                    '{$this->name}',
+                    '{$this->imageJson}',
+                    '{$this->details}',
+                    '{$this->area_id}',
+                    '{$this->user_id}'
+                )";
+            $result = $conn->execute($query);
 
-            if ($conn->query($sql) === true) {
-                $this->id = $conn->insert_id;
-                $this->new = false;
+            if ($result === true) {
+                $this->setId($conn->insert_id);
                 return true;
             } else {
-                echo "Error: " . $sql . "<br>" . $conn->error;
                 return false;
             }
         } else {
-            $sql = "UPDATE {$tn} set name='{$this->name}',
-							imageJson='{$this->imageJson}', 
-							details='{$this->details}',
-							area_id='{$this->area_id}',
-							user_id='{$this->user_id}'
-							where id={$this->id}";
-            return $conn->query($sql);
+            $query = "UPDATE {$tn} SET
+                    name='{$this->name}',
+                    imageJson='{$this->imageJson}', 
+                    details='{$this->details}',
+                    area_id='{$this->area_id}',
+                    user_id='{$this->user_id}'
+                    WHERE id={$this->id}";
+            $result = $conn->execute($query);
+            
+            if ($result->num_rows == 1) {
+                return true;
+            }
+            return false;
         }
     }
-
 
     public function delete()
     {
-        $C = new Connection();
-        $conn = $C->getConnection();
-        $tn = Street::$tableName;
+        $conn = new Connection();
+        $tn = self::$tableName;
 
-        if ($this->new != true) {
-            $sql = "DELETE FROM {$tn} WHERE id = {$this->id}";
-            return $conn->query($sql);
+        if (! $this->new) {
+            $query = "DELETE FROM {$tn} WHERE id={$this->id}";
+            $result = $conn->execute($query);
+
+            if ($result->num_rows == 1) {
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+
+    private static function checkResult($result)
+    {
+        $array = [];
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $obj = new Street(
+                        $row['name'],
+                        $row['imageJson'],
+                        $row['details'],
+                        $row['area_id'],
+                        $row['user_id']
+                    );
+                $obj->setId($row['id']);
+                array_push($array, $obj);
+            }
+            return $array;
+        } else {
+            return false;
         }
     }
 }
-
-// $pro = new Street("a","b","1","d","2","3");
-// $pro->save();
-
-// $street = Street::find(5);
-// $street->name = "pran water bottle for dogs";
-// $street->save();
-// cool_dump(); 

@@ -1,11 +1,9 @@
 <?php
 
-//Model Class for User
-
 class User
 {
     public static $tableName = "users";
-    public $id, $name, $mobile, $email, $address, $password, $token;
+    public $id, $name, $mobile, $email, $address, $password;
     private $new;
 
     function __construct($name, $mobile, $email, $address, $password)
@@ -14,7 +12,7 @@ class User
         $this->mobile = $mobile;
         $this->email = $email;
         $this->address = $address;
-        $this->password = encPassword($password);
+        $this->password = $password;
         $this->new = true;
     }
 
@@ -24,145 +22,100 @@ class User
         $this->new = false;
     }
 
-    //get all Users
-    public static function getAll($limit = -1)
-    {
-        $conn = new Connection();
-        $tn = User::$tableName;
-
-        if ($limit == -1) {
-            $sql = "SELECT * FROM {$tn}";
-        } else {
-            $sql = "SELECT * FROM {$tn} LIMIT {$limit}";
-        }
-
-        $results = $conn->getConnection()->query($sql);
-        $allUsersArray = [];
-
-        if ($results->num_rows > 0) {
-            // output data of each row
-            while ($row = $results->fetch_assoc()) {
-                $userObj = new User(
-                        $row['name'],
-                        $row['mobile'],
-						$row['email'],
-                        $row['address'],
-                        $row['password']
-                    );
-
-                $userObj->setId($row['id']);
-                array_push($allUsersArray, $userObj);
-            }
-            return $allUsersArray;
-        } else {
-            echo "0 or invalid number of results";
-            return $allUsersArray;
-        }
-    }
-
-
-    //find and return a User object by id
     public static function find($id)
     {
         $conn = new Connection();
-        $tn = User::$tableName;
-        $sql = "SELECT * FROM {$tn} where id = {$id}";
-        $result = $conn->getConnection()->query($sql);
+        $tn = self::$tableName;
 
-        if ($result->num_rows == 1) {
-            $row = $result->fetch_assoc();
-            $foundUser = new User(
-                    $row['name'],
-                    $row['mobile'],
-                    $row['email'],
-                    $row['address'],
-                    $row['password'],
-                    true
-                    );
-            $foundUser->setId($row['id']);
-            return $foundUser;
-        } else {
-            echo "0 or invalid number of results";
-        }
+        $query = "SELECT * FROM {$tn} WHERE id = {$id}";
+        $result = $conn->execute($query);
+
+        return self::checkResult($result);
     }
 
-    public static function findByEmail($email)
+    public static function findByEmailOrMobile($data)
     {
         $conn = new Connection();
-        $tn = User::$tableName;
-        $sql = "SELECT * FROM {$tn} where email = {$email}";
-        $result = $conn->getConnection()->query($sql);
+        $tn = self::$tableName;
+        
+        $dataType = filter_var($data, FILTER_VALIDATE_EMAIL) ? "email" : "mobile";
+        $query = "SELECT * FROM {$tn} WHERE {$dataType}={$email}";
+        $result = $conn->execute($query);
 
-        if ($result->num_rows == 1) {
-            $row = $result->fetch_assoc();
-            $foundUser = new User(
-                    $row['name'],
-                    $row['mobile'],
-                    $row['email'],
-                    $row['address'],
-                    $row['password'],
-                    true
-                    );
-            $foundUser->setId($row['id']);
-            return $foundUser;
-        } else {
-            echo "0 or invalid number of results";
-        }
+        return self::checkResult($result);
+    }
+
+    public static function findByToken($token)
+    {
+        $conn = new Connection();
+        $tn = self::$tableName;
+        
+        $query = "SELECT * FROM {$tn} WHERE token={$token}";
+        $result = $conn->execute($query);
+
+        return self::checkResult($result);
     }
 
     public function save()
     {
-        $C = new Connection();
-        $conn = $C->getConnection();
-        $tn = User::$tableName;
+        $conn = new Connection();
+        $tn = self::$tableName;
 
-        if ($this->new == true) {
-            $sql = "INSERT into {$tn} (name,mobile,email,address,password) values (
+        if ($this->new) {
+            $query = "INSERT INTO {$tn} (name, mobile, email, address, password) VALUES (
                         '{$this->name}',
                         '{$this->mobile}',
                         '{$this->email}',
                         '{$this->address}',
-                        '{$this->password}'
+                        '{$this->encPassword(password)}'
                     )";
-
-            if ($conn->query($sql) === true) {
-                $this->id = $conn->insert_id;
-                $this->new = false;
+            $result = $conn->execute($query);
+            
+            if ($result === true) {
+                $this->setId($conn->insert_id);
                 return true;
             } else {
-                echo "Error: " . $sql . "<br>" . $conn->error;
                 return false;
             }
         } else {
-            $sql = "UPDATE {$tn} set 
+            $query = "UPDATE {$tn} SET 
                 name='{$this->name}',
                 mobile='{$this->mobile}',
-                email ='{$this->email}'
-                address ='{$this->address}' 
-                password ='{$this->password}',
-                where id={$this->id}";
-            $conn->query($sql);
+                email='{$this->email}',
+                address='{$this->address}',
+                password='{$this->encPassword(password)}'
+                WHERE id={$this->id}";
+            $result = $conn->execute($query);
+            
+            if ($result->num_rows == 1)
+                return true;
+            return false;
         }
+        return false;
     }
 
-    public function saveToken($token)
+    public function rememberToken($null = false)
     {
-        $C = new Connection();
-        $conn = $C->getConnection();
-        $tn = User::$tableName;
-        
-        $sql = "UPDATE {$tn} set 
-            token='{$token}',
-            where id={$this->id}";
-        $conn->query($sql);
+        $conn = new Connection();
+        $tn = self::$tableName;
+
+        $token = $null ? "" : $this->generateToken();
+        $query = "UPDATE {$tn} SET token='{$token}' WHERE id={$this->id}";
+        $result = $conn->execute($query);
+
+        if ($result->num_rows == 1)
+            return true;
+        return false;
     }
 
     public function checkToken($userToken)
     {
         $conn = new Connection();
-        $tn = User::$tableName;
-        $sql = "SELECT token FROM {$tn} where id = {$this->id}";
-        $result = $conn->getConnection()->query($sql);
+        $tn = self::$tableName;
+
+        $query = "SELECT token FROM {$tn} WHERE id={$this->id}";
+        $result = $conn->execute($query);
+
         if ($result->num_rows == 1) {
             $row = $result->fetch_assoc();
             return $row['token'] == $userToken;
@@ -172,13 +125,35 @@ class User
 
     public function delete()
     {
-        $C = new Connection();
-        $conn = $C->getConnection();
-        $tn = User::$tableName;
+        $conn = new Connection();
+        $tn = self::$tableName;
 
-        if ($this->new != true) {
-            $sql = "DELETE FROM {$tn} WHERE id = {$this->id}";
-            return $conn->query($sql);
+        if (! $this->new) {
+            $query = "DELETE FROM {$tn} WHERE id={$this->id}";
+            $result = $conn->execute($query);
+
+            if ($result->num_rows == 1)
+                return true;
+            return false;
+        }
+        return false;
+    }
+
+    private static function checkResult($result)
+    {
+        if ($result->num_rows == 1) {
+            $row = $result->fetch_assoc();
+            $obj = new User(
+                    $row['name'],
+                    $row['mobile'],
+                    $row['email'],
+                    $row['address'],
+                    $row['password']
+                );
+            $obj->setId($row['id']);
+            return $obj;
+        } else {
+            return false;
         }
     }
 

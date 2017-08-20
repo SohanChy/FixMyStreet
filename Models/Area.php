@@ -1,7 +1,5 @@
 <?php
 
-//Model Class for Area
-
 class Area
 {
     public static $tableName = "areas";
@@ -11,7 +9,7 @@ class Area
     function __construct($name, $user_id)
     {
         $this->name = $name;
-        $this->user_id =$user_id;
+        $this->user_id = $user_id;
         $this->new = true;
     }
 
@@ -21,131 +19,90 @@ class Area
         $this->new = false;
     }
 
-    //get all Areas
-    public static function getAll($limit = -1)
+    public static function getAll()
     {
         $conn = new Connection();
-        $tn = Area::$tableName;
+        $tn = self::$tableName;
 
-        $sql = $limit == -1 ? "SELECT * FROM {$tn}" : "SELECT * FROM {$tn} LIMIT {$limit}";
-
-        $results = $conn->getConnection()->query($sql);
-        $allAreaArray = [];
-
-        if ($results->num_rows > 0) {
-            // output data of each row
-            while ($row = $results->fetch_assoc()) {
-                $areaObj = new Area(
-                    	$row['name'],
-                        $row['user_id']
-                    );
-                $areaObj->setId($row['id']);
-                array_push($allAreaArray, $areaObj);
-            }
-            return $allAreaArray;
-        } else {
-            echo "0 or invalid number of results";
-            return $allAreaArray;
-        }
+        $query = "SELECT * FROM {$tn}";
+        $result = $conn->execute($query);
+        
+        return self::checkResult($result);
     }
 
-
-    //find and return an Area object by id
     public static function find($id)
     {
         $conn = new Connection();
-        $tn = Area::$tableName;
-        $sql = "SELECT * FROM {$tn} where id = {$id}";
-        $result = $conn->getConnection()->query($sql);
+        $tn = self::$tableName;
+        
+        $query = "SELECT * FROM {$tn} WHERE id={$id}";
+        $result = $conn->execute($query);
 
-        if ($result->num_rows == 1) {
-            $row = $result->fetch_assoc();
+        return self::checkResult($result)[0]; // Assume that checkResult() will not return false
+    }
+    
+    public function save()
+    {
+        $conn = new Connection();
+        $tn = self::$tableName;
 
-            $foundArea = new Area($row['name'], $row['user_id']);
-            $foundArea->setId($row['id']);
-            return $foundArea;
+        if ($this->new == true) {
+            $query = "INSERT INTO {$tn} (name, user_id) VALUES (
+                    '{$this->name}',
+                    '{$this->user_id}'
+                )";
+            $result = $conn->execute($query);
+
+            if ($result === true) {
+                $this->setId($conn->insert_id);
+                return true;
+            } else {
+                return false;
+            }
         } else {
-            echo "0 or invalid number of results";
+            $query = "UPDATE {$tn} SET
+                name='{$this->name}',
+                user_id='{$this->user_id}'
+                WHERE id={$this->id}";
+            $result = $conn->execute($query);
+            
+            if ($result->num_rows == 1)
+                return true;
+            return false;
         }
     }
     
-    //find and return an Area object by name
-    public static function searchByName($name, $limit = -1)
+    public function delete()
     {
         $conn = new Connection();
-        $tn = Area::$tableName;
+        $tn = self::$tableName;
 
-        if ($limit == -1) {
-            $sql = "SELECT * FROM {$tn} where name = '{$name}'";
-        } else {
-            $sql = "SELECT * FROM {$tn} where name = '{$name}' LIMIT {$limit}";
+        if (! $this->new) {
+            $query = "DELETE FROM {$tn} WHERE id={$this->id}";
+            $result = $conn->execute($query);
+
+            if ($result->num_rows == 1)
+                return true;
+            return false;
         }
+        return false;
+    }
 
-        $results = $conn->getConnection()->query($sql);
-
-        if ($results->num_rows == 1) {
-            $row = $results->fetch_assoc();
-                $areaObj = new Area(
-                    $row['name'],
-                    $row['user_id']
+    private static function checkResult($result)
+    {
+        $array = [];
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $obj = new Area(
+                    	$row['name'],
+                        $row['user_id']
                     );
-
-                $areaObj->setId($row['id']);
-            return $areaObj;
+                $obj->setId($row['id']);
+                array_push($array, $obj);
+            }
+            return $array;
         } else {
             return false;
         }
     }
-
-    public function save()
-    {
-        $C = new Connection();
-        $conn = $C->getConnection();
-        $tn = Area::$tableName;
-
-        if ($this->new == true) {
-            $sql = "INSERT into {$tn} (name, user_id) values ('{$this->name}','{$this->user_id}')";
-
-            if ($conn->query($sql) === true) {
-                $this->id = $conn->insert_id;
-                $this->new = false;
-            } else {
-                echo "Error: " . $sql . "<br>" . $conn->error;
-            }
-        } else {
-            $sql = "UPDATE {$tn} set name = '{$this->name}', user_id = '{$this->user_id}' where id = {$this->id}";
-            return $conn->query($sql);
-        }
-    }
-
-    public function delete()
-    {
-        $C = new Connection();
-        $conn = $C->getConnection();
-        $tn = Area::$tableName;
-
-        if ($this->new != true) {
-            $sql = "DELETE FROM {$tn} WHERE id = {$this->id}";
-            return $conn->query($sql);
-        }
-    }
 }
-
-// var_dump(Area::getAll());
-// echo "<hr>";
-// cool_dump(Area::getAll());
-//
-// $obj = new Area("uttara");
-// var_dump($obj);echo "<hr>";
-//
-//
-// $obj->save();
-// var_dump($obj);echo "<hr>";
-//
-//
-// $obj->name = "badda";
-// $obj->save();
-// var_dump($obj);echo "<hr>";
-//
-//
-//$obj->delete();
