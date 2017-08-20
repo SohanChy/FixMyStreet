@@ -15,17 +15,33 @@
             </div>
             
             <div class="form-group">
+                <label class="control-label col-sm-4" for="mobile">Mobile No:</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" id="mobile" maxlength="50" placeholder="Enter Mobile No"
+                           name="mobile">
+                </div>
+            </div>
+
+            <div class="form-group">
                 <label class="control-label col-sm-4" for="email">Email:</label>
                 <div class="col-sm-4">
                     <input type="text" class="form-control" id="email" maxlength="50" placeholder="Enter Email"
                            name="email">
                 </div>
             </div>
+
+            <div class="form-group">
+                <label class="control-label col-sm-4" for="address">Address:</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" id="address" maxlength="100" placeholder="Enter Address"
+                           name="address">
+                </div>
+            </div>
             
             <div class="form-group">
                 <label class="control-label col-sm-4" for="pass">Password:</label>
                 <div class="col-sm-4">
-                    <input type="text" class="form-control" id="pass" maxlength="50" placeholder="Enter Password"
+                    <input type="password" class="form-control" id="pass" maxlength="50" placeholder="Enter Password"
                            name="pass">
                 </div>
             </div>
@@ -33,7 +49,7 @@
             <div class="form-group">
                 <label class="control-label col-sm-4" for="conPass">Confirm Password:</label>
                 <div class="col-sm-4">
-                    <input type="text" class="form-control" id="conPass" maxlength="50" placeholder="Confirm Password"
+                    <input type="password" class="form-control" id="conPass" maxlength="50" placeholder="Confirm Password"
                            name="conPass">
                 </div>
             </div>

@@ -99,7 +99,7 @@ class Street
                     WHERE id={$this->id}";
             $result = $conn->execute($query);
             
-            if ($result->num_rows == 1) {
+            if ($result) {
                 return true;
             }
             return false;

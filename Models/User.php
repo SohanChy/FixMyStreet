@@ -39,7 +39,7 @@ class User
         $tn = self::$tableName;
         
         $dataType = filter_var($data, FILTER_VALIDATE_EMAIL) ? "email" : "mobile";
-        $query = "SELECT * FROM {$tn} WHERE {$dataType}={$email}";
+        $query = "SELECT * FROM {$tn} WHERE {$dataType}='{$data}'";
         $result = $conn->execute($query);
 
         return self::checkResult($result);
@@ -50,7 +50,7 @@ class User
         $conn = new Connection();
         $tn = self::$tableName;
         
-        $query = "SELECT * FROM {$tn} WHERE token={$token}";
+        $query = "SELECT * FROM {$tn} WHERE token='{$token}'";
         $result = $conn->execute($query);
 
         return self::checkResult($result);
@@ -67,13 +67,13 @@ class User
                         '{$this->mobile}',
                         '{$this->email}',
                         '{$this->address}',
-                        '{$this->encPassword(password)}'
+                        '{$this->encPassword($this->password)}'
                     )";
             $result = $conn->execute($query);
             
             if ($result === true) {
                 $this->setId($conn->insert_id);
-                return true;
+                return true; 
             } else {
                 return false;
             }
@@ -83,11 +83,11 @@ class User
                 mobile='{$this->mobile}',
                 email='{$this->email}',
                 address='{$this->address}',
-                password='{$this->encPassword(password)}'
+                password='{$this->encPassword($this->password)}'
                 WHERE id={$this->id}";
             $result = $conn->execute($query);
             
-            if ($result->num_rows == 1)
+            if ($result)
                 return true;
             return false;
         }
@@ -103,8 +103,8 @@ class User
         $query = "UPDATE {$tn} SET token='{$token}' WHERE id={$this->id}";
         $result = $conn->execute($query);
 
-        if ($result->num_rows == 1)
-            return true;
+        if ($result)
+            return $token;
         return false;
     }
 
@@ -164,7 +164,7 @@ class User
 
     public function verifyPassword($givenPassword)
     {
-        return password_verify($this->password, $givenPassword);
+        return password_verify($givenPassword, $this->password);
     }
 
     private function generateToken()

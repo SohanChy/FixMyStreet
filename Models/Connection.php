@@ -7,6 +7,7 @@ class Connection
     private $password = "16911691";
     private $dbname = "fixMyStreetdb";
     private $conn;
+    public $insert_id;
 
     public function __construct()
     {
@@ -27,6 +28,10 @@ class Connection
     public function execute($query)
     {
         $result = $this->conn->query($query);
+        if (! $result) {
+            die("Something went wrong :(".$this->conn->error); //Error Message : $this->conn->error
+        }
+        $this->insert_id = $this->conn->insert_id;
         return $result;
     }
 }

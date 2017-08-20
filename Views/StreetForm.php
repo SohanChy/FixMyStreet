@@ -7,25 +7,25 @@
         <h2 style="margin-bottom: 5%">Add New Street</h2>
         <form class="form-horizontal" action="StreetController.php" method="POST">
             <div class="form-group">
-                <label class="control-label col-sm-2" for="name">Street Name:</label>
-                <div class="col-sm-10">
+                <label class="control-label col-sm-4" for="name">Street Name:</label>
+                <div class="col-sm-4">
                     <input type="text" class="form-control" id="name" maxlength="50" placeholder="Enter Street name"
                            name="name">
                 </div>
             </div>
             <div class="form-group">
-                <label class="control-label col-sm-2" for="txt">Details:</label>
-                <div class="col-sm-10">
+                <label class="control-label col-sm-4" for="txt">Details:</label>
+                <div class="col-sm-4">
                     <textarea class="form-control" rows="5" placeholder="Describe here..Max(50 characters)" id="txt"
                               name="details"></textarea>
                 </div>
             </div>
             <div class="form-group">
-                <label class="control-label col-sm-2" for="button">
+                <label class="control-label col-sm-4" for="button">
                     <input type="radio" title="Select Area" name="area" value="old" checked>
                     Select Area:
                 </label>
-                <div class="col-sm-10">
+                <div class="col-sm-4">
                     <div class="input-group">
                         <div class="dropdown">
                             <button id="dropdownBtn" class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
@@ -51,19 +51,19 @@
             </div>
 
             <div class="form-group">
-                <label class="control-label col-sm-2" for="button">
+                <label class="control-label col-sm-4" for="button">
                     <label><input type="radio" name="area" value="new"></label>
                     Create Area:
                 </label>
-                <div class="col-sm-10">
+                <div class="col-sm-4">
                     <input type="text" style="max-width: 200px" class="form-control" placeholder="Enter Area name"
                            name="newArea">
                 </div>
             </div>
 
             <div class="form-group">
-                <label class="control-label col-sm-2">Upload Picture:</label>
-                <div class="col-sm-3">
+                <label class="control-label col-sm-4">Upload Picture:</label>
+                <div class="col-sm-4">
                     <input type="file" name="streetPic1">
                     <input type="file" name="streetPic2">
                     <input type="file" name="streetPic3">
