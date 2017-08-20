@@ -45,6 +45,17 @@ class Street
         return self::checkResult($result);
     }
 
+    public static function getAllByUserId($userId)
+    {
+        $conn = new Connection();
+        $tn = Street::$tableName;
+
+        $query = "SELECT * FROM {$tn} WHERE user_id={$userId}";
+        $result = $conn->execute($query);
+
+        return self::checkResult($result);
+    }
+
     public static function searchByName($name)
     {
         $conn = new Connection();
