@@ -49,12 +49,34 @@ function validateRegForm()
     return true;
 }
 
+function validateAddStreetForm()
+{
+    global $error, $errorMessage;
+    $fields = array("name", "details");
+
+    if (! checkEmptyField($fields)) {
+        return false;
+    }
+    
+    if ($_POST["area"] == "old" && $_POST["oldArea"] == "") {
+        $error = "oldArea";
+        $errorMessage = "Select an area or create new";
+        return false;
+    }
+    if ($_POST["area"] == "new" && $_POST["newArea"] == "") {
+        $error = "newArea";
+        $errorMessage = "Enter area name or select from dropdown menu";
+        return false;
+    }
+    return true;
+}
+
 function checkEmptyField($fields)
 {
     global $error, $errorMessage;
 
     foreach($fields as $field) {
-        if (strlen($_POST[$field]) == 0) {
+        if ($_POST[$field] == "") {
             $error = $field;
             $errorMessage = "This field can't be empty";
             return false;

@@ -22,14 +22,7 @@
 
     <div style="text-align: center;">
         <h2>Welcome to Fix My Street</h2>
-        <?php
-        if(isset($area)){
-            echo "<p>All Streets in <b>{$area->name}</b> Area with problem are here.</p>";
-        }
-        else {
-            echo "<p>All Streets with problem are here.</p>";
-        }
-        ?>
+        <?php if (isset($message)) echo "<p>{$message}</p>"; ?>
     </div>
 
     <!-- Row For Areas and Streets -->

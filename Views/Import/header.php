@@ -8,7 +8,7 @@
         <link rel="icon" href="res/icon.png">
 
         <!--Custom Fonts-->
-        <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic">
+        <!-- <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic"> -->
 
         <!--Bootstrap core CSS-->
         <link rel="stylesheet" type="text/css" href="Views/vendor/bootstrap/css/bootstrap.min.css">

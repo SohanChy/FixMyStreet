@@ -13,7 +13,7 @@ if ($_SERVER['QUERY_STRING'] == "logout") {
         $curUser = false;
     }
     if (isset($_COOKIE["token"]) && !empty($_COOKIE["token"])) {
-        setcookie("token", "", time() - 1); //cookie expired
+        setcookie("token", "expired", time() - 1); //cookie expired
     }
     if (isset($_SESSION["curUser"]) && !empty($_SESSION["curUser"])) {
         unset($_SESSION["curUser"]);

@@ -155,12 +155,12 @@ class User
     private function generateToken()
     {
         $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
-        $hash = array();
+        $token = array();
         $alphaLength = strlen($alphabet) - 1;
-        for ($i = 0; $i < 20; $i++) {
+        for ($i = 0; $i < 20; $i++) {             //token length = 20
             $randAlpha = rand(0, $alphaLength);
-            $hash[] = $alphabet[$randAlpha];
+            $token[] = $alphabet[$randAlpha];
         }
-        return implode($hash);
+        return implode($token);
     }
 }
