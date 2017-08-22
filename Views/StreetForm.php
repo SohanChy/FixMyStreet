@@ -3,7 +3,7 @@
     require 'Import/header.php';
 ?>
 
-    <form class="form-horizontal" action="StreetController.php" method="POST">
+    <form class="form-horizontal" action="StreetController.php" method="POST" enctype="multipart/form-data">
         <h2 style="margin-bottom: 5%; text-align:center">Add New Street</h2>
         <div class="form-group">
             <label class="control-label col-sm-4" for="name">Street Name:</label>
@@ -95,9 +95,9 @@
         <div class="form-group">
             <label class="control-label col-sm-4">Upload Picture:</label>
             <div class="col-sm-4">
-                <input type="file" name="pic1">
-                <input type="file" name="pic2">
-                <input type="file" name="pic3">
+                <input type="file" name="pic1" accept="image/*">
+                <input type="file" name="pic2" accept="image/*">
+                <input type="file" name="pic3" accept="image/*">
                 <?php
                     if ($error == "picture") {
                         echo "<span class='help-block'>

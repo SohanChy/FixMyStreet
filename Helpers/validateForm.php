@@ -3,9 +3,10 @@
 function validateLogInForm()
 {
     global $error, $errorMessage;
-    $fields = array("data", "pass");
 
-    if (! checkEmptyField($fields)) {
+    $fields = array("data", "pass");
+    
+    if (! checkFields($fields)) {
         return false;
     }
     
@@ -22,7 +23,7 @@ function validateRegForm()
     global $error, $errorMessage;
     $fields = array("name", "mobile", "email", "address", "pass", "conPass");
 
-    if (! checkEmptyField($fields)) {
+    if (! checkFields($fields)) {
         return false;
     }
 
@@ -52,9 +53,10 @@ function validateRegForm()
 function validateAddStreetForm()
 {
     global $error, $errorMessage;
+    
     $fields = array("name", "details");
-
-    if (! checkEmptyField($fields)) {
+    
+    if (! checkFields($fields)) {
         return false;
     }
     
@@ -68,15 +70,35 @@ function validateAddStreetForm()
         $errorMessage = "Enter area name or select from dropdown menu";
         return false;
     }
+    if (! checkFiles()) {
+        $error = "picture";
+        $errorMessage = "image is required";
+        return false;
+    }
     return true;
 }
 
-function checkEmptyField($fields)
+function checkFiles()
+{
+    global $error, $errorMessage;
+
+    $fields = array("pic1", "pic2", "pic3");
+    
+    $flag = false;
+    foreach($fields as $field) {
+        if (isset($_FILES[$field]) && $_FILES[$field]["error"] == 0) {
+            $flag = true;
+        }
+    }
+    return $flag;
+}
+
+function checkFields($fields)
 {
     global $error, $errorMessage;
 
     foreach($fields as $field) {
-        if ($_POST[$field] == "") {
+        if (! isset($_POST[$field]) || $_POST[$field] == "") {
             $error = $field;
             $errorMessage = "This field can't be empty";
             return false;

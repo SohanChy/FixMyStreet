@@ -5,7 +5,7 @@
 
     <?php
         if ($message) {
-            echo "<center><h2><span class='label label-primary'>{$message}</span></h2></center>";
+            echo "<center><h2><span class='label label-danger'>{$message}</span></h2></center>";
         }
     ?>
     <form class="form-horizontal" action="UserController.php" method="POST">

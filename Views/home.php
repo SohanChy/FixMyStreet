@@ -39,7 +39,7 @@
         <div class="col-md-9">
             <?php
                 foreach ($streets as $street) {
-                    $defaultImg = json_decode($street->imageJson, true)["images"][0];
+                    $defaultImg = json_decode($street->imageJson, true)[0];
                     $link = "{$rootFolder}/{$streetPhp}?streetid={$street->id}";
                     echo "
                         <div class=\"col-md-4\">

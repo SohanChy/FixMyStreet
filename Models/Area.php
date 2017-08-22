@@ -40,6 +40,17 @@ class Area
 
         return self::checkResult($result)[0]; // Assume that checkResult() will not return false
     }
+
+    public static function searchByName($name)
+    {
+        $conn = new Connection();
+        $tn = Area::$tableName;
+
+        $query = "SELECT * FROM {$tn} where name='{$name}'";
+        $result = $conn->execute($query);
+
+        return self::checkResult($result)[0]; // it will return null instead of false
+    }
     
     public function save()
     {
