@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 19, 2017 at 08:55 AM
+-- Generation Time: Aug 23, 2017 at 06:17 AM
 -- Server version: 10.1.13-MariaDB
 -- PHP Version: 7.0.8
 
@@ -33,13 +33,6 @@ CREATE TABLE `areas` (
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
---
--- Dumping data for table `areas`
---
-
-INSERT INTO `areas` (`id`, `name`, `user_id`, `time`) VALUES
-(1, 'Badda', 1, '2017-08-19 06:39:49');
-
 -- --------------------------------------------------------
 
 --
@@ -56,14 +49,6 @@ CREATE TABLE `streets` (
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
---
--- Dumping data for table `streets`
---
-
-INSERT INTO `streets` (`id`, `name`, `imageJson`, `details`, `area_id`, `user_id`, `time`) VALUES
-(1, 'Badda Link Road', ' ', 'very bad', 1, 1, '2017-08-19 06:39:49'),
-(2, 'Badda old Road', ' ', 'bad', 1, 1, '2017-08-19 06:41:25');
-
 -- --------------------------------------------------------
 
 --
@@ -72,10 +57,12 @@ INSERT INTO `streets` (`id`, `name`, `imageJson`, `details`, `area_id`, `user_id
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
-  `username` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `password` varchar(1000) COLLATE utf8_unicode_ci NOT NULL,
-  `fullname` tinytext COLLATE utf8_unicode_ci NOT NULL,
+  `name` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  `mobile` varchar(20) COLLATE utf8_unicode_ci NOT NULL,
+  `email` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
   `address` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `password` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `token` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
@@ -100,7 +87,8 @@ ALTER TABLE `streets`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `admins_username_uindex` (`username`);
+  ADD UNIQUE KEY `email` (`email`),
+  ADD UNIQUE KEY `mobile` (`mobile`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -110,17 +98,17 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `areas`
 --
 ALTER TABLE `areas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 --
 -- AUTO_INCREMENT for table `streets`
 --
 ALTER TABLE `streets`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

@@ -4,6 +4,8 @@ require_once 'initialize.php';
 
 $streetid = check("streetid");
 
-$streets[] = Street::find($streetid);
+$street = Street::find($streetid);
 
-require_once 'Views/home.php';
+$user = User::find($street->user_id);
+
+require_once 'Views/singleStreet.php';

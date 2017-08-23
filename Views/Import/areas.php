@@ -3,9 +3,10 @@
     <!-- Area loop here -->
     <?php
         $areas = Area::getAll();
-        foreach ($areas as $area) {
-            $link = "{$areaPhp}?areaid={$area->id}";
-            echo "<li><a href=\"{$link}\">{$area->name}</a></li>";
-        }
+        if ($areas)
+            foreach ($areas as $area) {
+                $link = "{$areaPhp}?areaid={$area->id}";
+                echo "<li><a href='{$link}'>{$area->name}</a></li>";
+            }
     ?>
 </ul>

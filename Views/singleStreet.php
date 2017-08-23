@@ -35,26 +35,25 @@
             ?>
         </div>
         
-        <!-- Streets -->
+        <!-- Street -->
         <div class="col-md-9">
             <?php
-                if ($streets)
-                    foreach ($streets as $street) {
-                        $defaultImg = json_decode($street->imageJson, true)[0];
-                        $link = "{$rootFolder}/{$streetPhp}?streetid={$street->id}";
-                        echo "
-                            <div class='col-md-4'>
-                                <div class='thumbnail'>
-                                    <a href='/{$link}' target='_blank'>
-                                        <img src='pictures/{$defaultImg}' alt='Street Picture' style='width:100%'>
-                                        <div class='caption'>
-                                            <p>{$street->name}</p>
-                                        </div>
-                                    </a>
-                                </div>
-                            </div>
-                        ";
-                    }
+                echo "
+                    <div>
+                        <h1>{$street->name}</h1>
+                        <h5>Posted By : {$user->name}</h5>
+                        <h3>Details : {$street->details}</h3>
+                    </div> 
+                ";
+
+                $images = json_decode($street->imageJson, true);
+                foreach ($images as $image) {
+                    echo "
+                        <div>
+                            <img src='pictures/{$image}' alt='Street Picture' style='width:100%'>
+                        <div>
+                    ";
+                }
             ?>
         </div>
     </div>

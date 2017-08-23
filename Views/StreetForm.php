@@ -49,12 +49,13 @@
                         <ul id= "select-area" class="dropdown-menu">
                             <?php
                                 $areas = Area::getAll();
-                                foreach ($areas as $area) {
-                                    echo "
-                                        <li><a href=\"#\">{$area->name}</a></li>
-                                        <li role=\"separator\" class=\"divider\"></li>
-                                    ";
-                                }
+                                if ($areas)
+                                    foreach ($areas as $area) {
+                                        echo "
+                                            <li><a href=\"#\">{$area->name}</a></li>
+                                            <li role=\"separator\" class=\"divider\"></li>
+                                        ";
+                                    }
                             ?>
                         </ul>
                     </div>
